@@ -1,0 +1,44 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build DLL using Docker
+      run: |
+        ./build.sh
+
+    - name: Get DLL version number
+      run: |
+        echo "VERSION=$(./scripts/query_manifest.sh version)" >> $GITHUB_ENV
+
+    - name: Get DLL file path
+      run: |
+        echo "DLL_PATH=$(./scripts/get_dll.sh './build')" >> $GITHUB_ENV
+
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ env.VERSION }}
+        name: v${{ env.VERSION }}
+        files: ${{ env.DLL_PATH }}
+        body_path: CHANGELOG.md

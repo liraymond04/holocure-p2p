@@ -1,0 +1,25 @@
+.cache/
+
+.secrets
+
+# Docker builds
+build/
+
+# MVSC builds
+x64/
+x86/
+
+# Generated Visual Studio files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
+out/
+
+main.dir/
+Src.dir/
+
+main.sln
+
+*.vcxproj
+*.vcxproj.filters
